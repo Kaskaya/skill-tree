@@ -2,41 +2,6 @@ import React, { useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import "./SkillTree.css";
 
-const skillsData = {
-  branches: [
-    {
-      name: "Branch 1",
-      skills: Array(8)
-        .fill()
-        .map((_, i) => ({
-          id: `b1-s${i + 1}`,
-          selected: false,
-          img: `/offensive-skill${i + 1}.png`,
-        })),
-    },
-    {
-      name: "Branch 2",
-      skills: Array(8)
-        .fill()
-        .map((_, i) => ({
-          id: `b2-s${i + 1}`,
-          selected: false,
-          img: `/defensive-skill${i + 1}.png`,
-        })),
-    },
-    {
-      name: "Branch 3",
-      skills: Array(8)
-        .fill()
-        .map((_, i) => ({
-          id: `b3-s${i + 1}`,
-          selected: false,
-          img: `/active-skill${i + 1}.png`,
-        })),
-    },
-  ],
-};
-
 const explanations = {
   "b1-s1": "Explanation for Offensive Skill 1",
   "b1-s2": "Explanation for Offensive Skill 2",
@@ -64,34 +29,106 @@ const explanations = {
   "b3-s8": "Explanation for Active Skill 8",
 };
 
+const createSkillsData = (useAnimation) => [
+  {
+    name: "Branch 1",
+    skills: Array(8)
+      .fill()
+      .map((_, i) => ({
+        id: `b1-s${i + 1}`,
+        selected: false,
+        img: `/offensive-skill${i + 1}.png`,
+        animationControls: useAnimation(),
+      })),
+  },
+  {
+    name: "Branch 2",
+    skills: Array(8)
+      .fill()
+      .map((_, i) => ({
+        id: `b2-s${i + 1}`,
+        selected: false,
+        img: `/defensive-skill${i + 1}.png`,
+        animationControls: useAnimation(),
+      })),
+  },
+  {
+    name: "Branch 3",
+    skills: Array(8)
+      .fill()
+      .map((_, i) => ({
+        id: `b3-s${i + 1}`,
+        selected: false,
+        img: `/active-skill${i + 1}.png`,
+        animationControls: useAnimation(),
+      })),
+  },
+];
+
 const SkillTree = () => {
   const [skillPoints, setSkillPoints] = useState(20);
-  const [skills, setSkills] = useState(skillsData);
+  const [skills, setSkills] = useState(createSkillsData(useAnimation));
   const [hoveredSkill, setHoveredSkill] = useState(null);
-
-  const skillAnimationControls = useAnimation(); // Define animation controls here
+  const [lockedSkills, setLockedSkills] = useState({});
 
   const handleSkillClick = (branchIndex, skillIndex) => {
-    if (skillPoints <= 0) return;
-
-    const newSkills = { ...skills };
-    const branch = newSkills.branches[branchIndex];
+    const newSkills = [...skills];
+    const branch = newSkills[branchIndex];
     const skill = branch.skills[skillIndex];
 
-    if (
-      !skill.selected &&
-      (skillIndex === 0 || branch.skills[skillIndex - 1].selected)
-    ) {
-      skill.selected = true;
-      setSkillPoints(skillPoints - 1);
-      setSkills(newSkills);
+    const rows = [[0], [1, 2], [3], [4, 5], [6], [7]];
+    const rowIndex = rows.findIndex((row) => row.includes(skillIndex));
 
-      // Trigger the scale animation for the clicked skill
-      skillAnimationControls.start({
-        scale: [1, 0.9, 1],
-        transition: { duration: 0.3 },
-      });
+    // Check if previous skills are selected
+    if (rowIndex > 0) {
+      const previousRow = rows[rowIndex - 1];
+      const anyPreviousSelected = previousRow.some(
+        (prevIdx) => branch.skills[prevIdx].selected
+      );
+      if (!anyPreviousSelected) {
+        return; // If no previous skill is selected, do nothing
+      }
     }
+
+    const isTwoSkillRow = rows[rowIndex].length === 2;
+
+    if (skill.selected) {
+      // Unselect the skill only if the next row is not selected
+      if (
+        rowIndex === rows.length - 1 ||
+        !rows[rowIndex + 1].some((idx) => branch.skills[idx].selected)
+      ) {
+        skill.selected = false;
+        setSkillPoints(skillPoints + 1);
+      }
+    } else {
+      // Check if any skill in the row is already selected
+      const anySelectedInRow = rows[rowIndex].some(
+        (idx) => branch.skills[idx].selected
+      );
+
+      // If not, decrease the skill points
+      if (!anySelectedInRow) {
+        setSkillPoints(skillPoints - 1);
+      }
+
+      // Unselect other skills in the row
+      rows[rowIndex].forEach((idx) => {
+        if (idx !== skillIndex) {
+          branch.skills[idx].selected = false;
+        }
+      });
+
+      skill.selected = true;
+    }
+
+    setSkills(newSkills);
+
+    // Trigger the scale animation for the clicked skill
+    skill.animationControls.start({
+      scale: [1, 0.9, 1],
+      transition: { duration: 0.3 },
+    });
   };
 
   const renderSkills = (branch, branchIndex) => {
@@ -199,7 +236,7 @@ const SkillTree = () => {
               onClick={() => handleSkillClick(branchIndex, skillIndex)}
               onMouseEnter={() => setHoveredSkill(branch.skills[skillIndex].id)}
               onMouseLeave={() => setHoveredSkill(null)}
-              animate={skillAnimationControls}
+              animate={branch.skills[skillIndex].animationControls}
               initial={{ scale: 1 }}
               transition={{ duration: 0.3 }}
             />
@@ -214,7 +251,7 @@ const SkillTree = () => {
       <h1>Skill Tree</h1>
       <p>Skill Points: {skillPoints}</p>
       <div className="branches">
-        {skills.branches
+        {skills
           .map((branch, index) => (
             <div key={branch.name} className="branch">
               <h2>{branch.name}</h2>
@@ -227,4 +264,8 @@ const SkillTree = () => {
   );
 };
 
-export default SkillTree;
+const App = () => {
+  return <SkillTree />;
+};
+
+export default App;
