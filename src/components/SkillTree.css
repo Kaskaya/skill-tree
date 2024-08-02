@@ -52,7 +52,7 @@
 }
 
 .skill.selected {
-  background-color: #ffd700; /* Nice yellow color */
+  background-color: #ffd700;
   color: white;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5),
     0 0 30px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.2);
@@ -70,36 +70,53 @@
 
 .connector-right {
   left: -65px;
-  border-top: 10px solid gray; /* Light yellow color */
+  border-top: 10px solid gray;
   border-right: 10px solid gray;
 }
 
 .connector-left {
   right: -65px;
-  border-top: 10px solid gray; /* Light yellow color */
+  border-top: 10px solid gray;
   border-left: 10px solid gray;
 }
 
 .connector-straight {
   right: -65px;
-  border-top: 10px solid gray; /* Light yellow color */
   border-left: 10px solid gray;
 }
 
+.connector-right.active {
+  border-top: 10px solid yellow;
+  border-right: 10px solid yellow;
+  z-index: 10;
+}
+
+.connector-left.active {
+  border-top: 10px solid yellow;
+  border-left: 10px solid yellow;
+  z-index: 10;
+}
+
+.connector-straight.active {
+  border-left: 10px solid yellow;
+  z-index: 10;
+}
+
 .explanation {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  border: 1px solid red;
+  border-radius: 1px 20px 1px 20px;
   position: absolute;
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
   margin-bottom: 20px;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
   padding: 16px;
-  border-radius: 16px;
-  max-width: 280px;
-  text-align: center;
-  font-size: 20px;
-  visibility: hidden;
-  min-width: 150px;
+  width: 300px;
+  background-color: black;
+  padding: 30px;
+  text-align: left;
   z-index: 100;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6), 0 0 15px rgba(255, 0, 0, 0.4);
 }
