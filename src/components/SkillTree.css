@@ -39,7 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: gray;
+  background-color: #ccc;
   border-radius: 50%;
   color: red;
   cursor: pointer;
@@ -51,16 +51,18 @@
     rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
+.skill:hover {
+  background-color: white;
+}
+
 .skill.selected {
   background-color: #ffd700;
-  color: white;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5),
     0 0 30px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.2);
 }
 
 .connector-right,
-.connector-left,
-.connector-straight {
+.connector-left {
   width: 100px;
   height: 120px;
   position: absolute;
@@ -70,19 +72,23 @@
 
 .connector-right {
   left: -65px;
-  border-top: 10px solid gray;
-  border-right: 10px solid gray;
+  border-top: 10px solid;
+  border-right: 10px solid;
 }
 
 .connector-left {
   right: -65px;
-  border-top: 10px solid gray;
-  border-left: 10px solid gray;
+  border-top: 10px solid;
+  border-left: 10px solid;
 }
 
 .connector-straight {
+  width: 100px;
+  height: 120px;
+  position: absolute;
+  top: -55px;
   right: -65px;
-  border-left: 10px solid gray;
+  border-left: 10px solid;
 }
 
 .connector-right.active {
